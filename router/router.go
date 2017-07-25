@@ -3,8 +3,8 @@ package router
 import (
 	"github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
-	"gitlab.ricebook.net/platform/stats/config"
-	"gitlab.ricebook.net/platform/stats/handler"
+	"gitlab.ricebook.net/platform/eru-stats/config"
+	"gitlab.ricebook.net/platform/eru-stats/handler"
 )
 
 // Run eruapp server

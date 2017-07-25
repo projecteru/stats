@@ -16,7 +16,7 @@ build_job:
     - "go get -u -v -d github.com/coreos/etcd/client"
     - "go get -u -v -d github.com/deckarep/golang-set"
     - "go get -u -v -d github.com/gin-gonic/gin"
-    - "ln -s $CI_PROJECT_DIR $GOPATH/src/gitlab.ricebook.net/platform/stats"
+    - "ln -s $CI_PROJECT_DIR $GOPATH/src/gitlab.ricebook.net/platform/eru-stats"
     - "go build -ldflags \"$(GO_LDFLAGS)\" -a -tags netgo -installsuffix netgo -o eru-stats"
   artifacts:
     paths:

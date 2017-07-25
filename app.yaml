@@ -8,17 +8,12 @@ entrypoints:
     healthcheck_url: "/ping"
     healthcheck_expected_code: 200
 build:
+  - "cp eru-stats /usr/bin"
   - "eru-stats --version"
 base: "hub.ricebook.net/base/alpine:base-2017.03.14"
+subscribers: "@wrfly_;"
+volumes:
+  - "$PERMDIR/:/etc/eru/"
 permitted_users:
   - "cmgs"
   - "fushouguo"
-combos:
-  test-in-c1:
-    cpu: 1
-    memory: "64MB"
-    podname: "dev"
-    entrypoint: "api"
-    networks:
-      - "release"
-    envs: "FOO=bar;"

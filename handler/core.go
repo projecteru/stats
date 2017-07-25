@@ -11,8 +11,8 @@ import (
 	"github.com/coreos/etcd/client"
 	ctypes "gitlab.ricebook.net/platform/core/types"
 	cutils "gitlab.ricebook.net/platform/core/utils"
-	"gitlab.ricebook.net/platform/stats/config"
-	"gitlab.ricebook.net/platform/stats/types"
+	"gitlab.ricebook.net/platform/eru-stats/config"
+	"gitlab.ricebook.net/platform/eru-stats/types"
 )
 
 func CorePods() (pods []string, err error) {

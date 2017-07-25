@@ -8,9 +8,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/coreos/etcd/client"
-	"gitlab.ricebook.net/platform/stats/config"
-	"gitlab.ricebook.net/platform/stats/router"
-	"gitlab.ricebook.net/platform/stats/versioninfo"
+	"gitlab.ricebook.net/platform/eru-stats/config"
+	"gitlab.ricebook.net/platform/eru-stats/router"
+	"gitlab.ricebook.net/platform/eru-stats/versioninfo"
 	"gopkg.in/yaml.v2"
 )
 

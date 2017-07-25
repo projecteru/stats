@@ -11,7 +11,7 @@ import (
 	"github.com/coreos/etcd/client"
 	atypes "gitlab.ricebook.net/platform/agent/types"
 	ctypes "gitlab.ricebook.net/platform/core/types"
-	"gitlab.ricebook.net/platform/stats/config"
+	"gitlab.ricebook.net/platform/eru-stats/config"
 )
 
 // Node running agent
