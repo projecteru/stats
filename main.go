@@ -76,13 +76,13 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = versioninfo.NAME
-	app.Usage = "Run eru app"
+	app.Usage = "Run eru-stats"
 	app.Version = versioninfo.VERSION
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "config",
-			Value:       "/etc/eru/app.yaml",
-			Usage:       "config file path for app, in yaml",
+			Value:       "/etc/eru/eru-stats.yaml",
+			Usage:       "config file path for eru-stats, in yaml",
 			Destination: &configPath,
 			EnvVar:      "ERU_CONFIG_PATH",
 		},

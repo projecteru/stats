@@ -1,4 +1,4 @@
-REPO_PATH := gitlab.ricebook.net/platform/eruapp
+REPO_PATH := gitlab.ricebook.net/platform/eru-stats
 REVISION := $(shell git rev-parse HEAD || unknown)
 BUILTAT := $(shell date +%Y-%m-%dT%H:%M:%S)
 GO_LDFLAGS ?= -s -X $(REPO_PATH)/versioninfo.REVISION=$(REVISION) \

@@ -7,7 +7,7 @@ import (
 	"gitlab.ricebook.net/platform/eru-stats/handler"
 )
 
-// Run eruapp server
+// Run eru-stats server
 func Run() error {
 	r := gin.Default()
 
