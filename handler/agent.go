@@ -10,7 +10,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/coreos/etcd/client"
 	atypes "gitlab.ricebook.net/platform/agent/types"
-	ctypes "gitlab.ricebook.net/platform/core/types"
 	"gitlab.ricebook.net/platform/eru-stats/config"
 )
 
@@ -19,7 +18,6 @@ type Node struct {
 	HostName string
 	PodName  string
 	Mem      string
-	ctypes.CPUMap
 }
 
 func (n *Node) allContainers() ([]string, error) {
@@ -54,7 +52,7 @@ func (n *Node) getContainer(cid string) (atypes.Container, error) {
 }
 
 // AgentAllNodesAndContainers get all nodes and all containers in etcd(agent keys)
-func AgentAllNodesAndContainers() (nodes, containers []string, err error) {
+func AgentAllNodesAndContainers() (nodes []string, containers map[string]string, err error) {
 	key := fmt.Sprintf("%s", config.C.Etcd.AgentPrefix)
 	e := config.C.Etcd.Api
 	resp, err := e.Get(context.Background(), key, &client.GetOptions{})
@@ -68,14 +66,18 @@ func AgentAllNodesAndContainers() (nodes, containers []string, err error) {
 	}
 
 	var wg sync.WaitGroup
-	containerChan := make(chan []string)
+	// containers["xxx-xxx-xxx-xxx"] = "c1-docker-1"
+	containers = map[string]string{}
+	containerChan := make(chan map[string]string)
 
 	go func() {
 		wg.Add(1)
 		defer wg.Done()
 		remaining := len(nodes)
 		for c := range containerChan {
-			containers = append(containers, c...)
+			for c, n := range c {
+				containers[c] = n
+			}
 			if remaining--; remaining == 0 {
 				close(containerChan)
 			}
@@ -92,7 +94,11 @@ func AgentAllNodesAndContainers() (nodes, containers []string, err error) {
 				log.Errorf("CountContainers error: %s", err)
 				return
 			}
-			containerChan <- nodeContainers
+			containers := map[string]string{}
+			for _, id := range nodeContainers {
+				containers[id] = hostname
+			}
+			containerChan <- containers
 		}(n)
 	}
 	wg.Wait()

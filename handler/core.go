@@ -79,8 +79,7 @@ func podGetNodes(podname string) (nodes []Node, err error) {
 			n := Node{
 				HostName: node.Name,
 				PodName:  podname,
-				Mem:      fmt.Sprintf("%d MB", (node.MemCap / 1024 / 1024)),
-				CPUMap:   node.CPU,
+				Mem:      fmt.Sprintf("%d MB | %d GB", (node.MemCap / 1024 / 1024), (node.MemCap / 1024 / 1024 / 1024)),
 			}
 			nodeInfoChan <- n
 		}(node.Key)
@@ -161,7 +160,7 @@ func CoreStats() (int, int) {
 	return len(coreNodes), len(coreContainers)
 }
 
-func coreContainerInfo(containerID string) (container types.Container, err error) {
+func coreGetContainerInfo(containerID string) (container types.Container, err error) {
 	key := fmt.Sprintf("%s/container/%s", config.C.Etcd.CorePrefix, containerID)
 	e := config.C.Etcd.Api
 	resp, err := e.Get(context.Background(), key, &client.GetOptions{})
@@ -180,6 +179,8 @@ func coreContainerInfo(containerID string) (container types.Container, err error
 		Entrypoint: entrypoint,
 		Memory:     c.Memory,
 		CPU:        c.CPU,
+		Pod:        c.Podname,
+		Node:       c.Nodename,
 	}
 
 	return container, nil
@@ -192,34 +193,10 @@ func AppStats() (appStats map[string]*types.App, err error) {
 	}
 
 	// get all containers' info
-	var wg sync.WaitGroup
-	wg.Add(len(allContainers))
-	containerChan := make(chan types.Container)
-	allContainerInfo := []types.Container{}
-	go func() {
-		wg.Add(1)
-		defer wg.Done()
-		remaining := len(allContainers)
-		for c := range containerChan {
-			allContainerInfo = append(allContainerInfo, c)
-			if remaining--; remaining == 0 {
-				close(containerChan)
-			}
-		}
-	}()
-	for _, c := range allContainers {
-		go func(containername string) {
-			defer wg.Done()
-			container, err := coreContainerInfo(containername)
-			if err != nil {
-				log.Errorf("Get container info error: %s", err)
-				return
-			}
-			containerChan <- container
-		}(c)
+	allContainerInfo, err := ContainersInfo(allContainers)
+	if err != nil {
+		return appStats, err
 	}
-	wg.Wait()
-
 	// 整理container信息
 	appStats = map[string]*types.App{}
 
@@ -245,4 +222,35 @@ func AppStats() (appStats map[string]*types.App, err error) {
 	}
 
 	return appStats, nil
+}
+
+func ContainersInfo(IDs []string) ([]types.Container, error) {
+	var wg sync.WaitGroup
+	wg.Add(len(IDs))
+	containerChan := make(chan types.Container)
+	allContainerInfo := []types.Container{}
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+		remaining := len(IDs)
+		for c := range containerChan {
+			allContainerInfo = append(allContainerInfo, c)
+			if remaining--; remaining == 0 {
+				close(containerChan)
+			}
+		}
+	}()
+	for _, id := range IDs {
+		go func(id string) {
+			defer wg.Done()
+			container, err := coreGetContainerInfo(id)
+			if err != nil {
+				log.Errorf("Get container info error: %s", err)
+				return
+			}
+			containerChan <- container
+		}(id)
+	}
+	wg.Wait()
+	return allContainerInfo, nil
 }

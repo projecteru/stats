@@ -1,6 +1,9 @@
 package router
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"gitlab.ricebook.net/platform/eru-stats/config"
@@ -57,33 +60,87 @@ func diff(c *gin.Context) {
 		c.JSON(500, gin.H{
 			"err": err.Error(),
 		})
+		return
 	}
-
-	_, agentContainers, err := handler.AgentAllNodesAndContainers()
+	coreNodes, _, err := handler.CoreNodes()
 	if err != nil {
 		c.JSON(500, gin.H{
 			"err": err.Error(),
 		})
+		return
 	}
 
+	agentNodes, agentContainers, err := handler.AgentAllNodesAndContainers()
+	if err != nil {
+		c.JSON(500, gin.H{
+			"err": err.Error(),
+		})
+		return
+	}
+
+	// containers
 	coreContainerSet := mapset.NewSet()
 	for _, c := range coreContainers {
 		coreContainerSet.Add(c)
 	}
 	agentContainerSet := mapset.NewSet()
-	for _, c := range agentContainers {
-		agentContainerSet.Add(c)
+	for id := range agentContainers {
+		agentContainerSet.Add(id)
+	}
+
+	// nodes
+	coreNodeSet := mapset.NewSet()
+	for _, n := range coreNodes {
+		coreNodeSet.Add(n.HostName)
+	}
+
+	agentNodeSet := mapset.NewSet()
+	for _, n := range agentNodes {
+		nodeShotName := strings.Split(n, ".")[0]
+		agentNodeSet.Add(nodeShotName)
 	}
 
 	// core - agent
-	agentLess := coreContainerSet.Difference(agentContainerSet)
-
+	agentContainerLess := coreContainerSet.Difference(agentContainerSet)
 	// agent - core
-	agentMore := agentContainerSet.Difference(coreContainerSet)
+	agentContainerMore := agentContainerSet.Difference(coreContainerSet)
+
+	// core - agent
+	agentNodeLess := coreNodeSet.Difference(agentNodeSet)
+	// agent - core
+	agentNodeMore := agentNodeSet.Difference(coreNodeSet)
+
+	// findout container nodes
+	agentMoreContainers := []string{}
+	for _, i := range agentContainerMore.ToSlice() {
+		id := i.(string)
+		agentMoreContainers = append(agentMoreContainers, fmt.Sprintf("%s__on_node__%s", id, agentContainers[id]))
+	}
+	agentLessContainers := []string{}
+	s := []string{}
+	for _, i := range agentContainerLess.ToSlice() {
+		s = append(s, i.(string))
+	}
+	agentLessContainersInfo, err := handler.ContainersInfo(s)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"err": err.Error(),
+		})
+		return
+	}
+	for _, c := range agentLessContainersInfo {
+		agentLessContainers = append(agentLessContainers, fmt.Sprintf("%s__on_node__%s", c.ID, c.Node))
+	}
 
 	c.JSON(200, gin.H{
-		"agentLess": agentLess.ToSlice(),
-		"agentMore": agentMore.ToSlice(),
+		"container": gin.H{
+			"agentLess": agentLessContainers,
+			"agentMore": agentMoreContainers,
+		},
+		"nodes": gin.H{
+			"agentLess": agentNodeLess.ToSlice(),
+			"agentMore": agentNodeMore.ToSlice(),
+		},
 	})
 
 }
@@ -94,6 +151,7 @@ func podstatus(c *gin.Context) {
 		c.JSON(500, gin.H{
 			"err": err.Error(),
 		})
+		return
 	}
 
 	c.JSON(200, podNodes)
@@ -105,6 +163,7 @@ func appstatus(c *gin.Context) {
 		c.JSON(500, gin.H{
 			"err": err.Error(),
 		})
+		return
 	}
 
 	c.JSON(200, appStats)

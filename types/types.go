@@ -8,6 +8,8 @@ type Container struct {
 	Entrypoint string
 	Memory     int64
 	CPU        ctypes.CPUMap
+	Pod        string
+	Node       string
 }
 
 type Entrypoint struct {
