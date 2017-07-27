@@ -1,9 +1,6 @@
 # Binaries for programs and plugins
 eru-stats
 
-# config file
-local_config.yaml
-
 # Test binary, build with `go test -c`
 *.test
 

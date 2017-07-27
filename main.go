@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -11,12 +11,10 @@ import (
 	"gitlab.ricebook.net/platform/eru-stats/config"
 	"gitlab.ricebook.net/platform/eru-stats/router"
 	"gitlab.ricebook.net/platform/eru-stats/versioninfo"
-	"gopkg.in/yaml.v2"
 )
 
 var (
-	configPath string
-	logLevel   string
+	logLevel string
 )
 
 func setupLog(l string) error {
@@ -34,15 +32,29 @@ func setupLog(l string) error {
 	return nil
 }
 
-func initConfig(configPath string) error {
-	bytes, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		return err
-	}
+func initConfig() error {
 	config.C = &config.Config{}
-	if err := yaml.Unmarshal(bytes, config.C); err != nil {
-		return err
+
+	config.C.Bind = ":6006"
+	if os.Getenv("BIND") != "" {
+		config.C.Bind = os.Getenv("BIND")
 	}
+	config.C.Etcd.AgentPrefix = "/agent2"
+	if os.Getenv("AgentPrefix") != "" {
+		config.C.Etcd.AgentPrefix = os.Getenv("AgentPrefix")
+	}
+	config.C.Etcd.CorePrefix = "/eru-core"
+	if os.Getenv("CorePrefix") != "" {
+		config.C.Etcd.CorePrefix = os.Getenv("CorePrefix")
+	}
+	nodeIP := os.Getenv("ERU_NODE_IP")
+	etcdEnpoints := fmt.Sprintf("http://%s:2379", nodeIP)
+	if os.Getenv("EtcdEndpoints") != "" {
+		etcdEnpoints = os.Getenv("EtcdEndpoints")
+	}
+	etcdEnpoints = strings.Replace(etcdEnpoints, "\\", "", -1)
+	config.C.Etcd.EtcdEndpoints = strings.Split(etcdEnpoints, ",")
+
 	etcdClient, err := client.New(client.Config{Endpoints: config.C.Etcd.EtcdEndpoints})
 	if err != nil {
 		return err
@@ -56,11 +68,7 @@ func serve() {
 		log.Fatal(err)
 	}
 
-	if configPath == "" {
-		log.Fatalf("Config path must be set")
-	}
-
-	if err := initConfig(configPath); err != nil {
+	if err := initConfig(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -79,13 +87,6 @@ func main() {
 	app.Usage = "Run eru-stats"
 	app.Version = versioninfo.VERSION
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:        "config",
-			Value:       "/etc/eru/eru-stats.yaml",
-			Usage:       "config file path for eru-stats, in yaml",
-			Destination: &configPath,
-			EnvVar:      "ERU_CONFIG_PATH",
-		},
 		cli.StringFlag{
 			Name:        "log-level",
 			Value:       "INFO",

@@ -17,3 +17,14 @@ volumes:
 permitted_users:
   - "cmgs"
   - "fushouguo"
+combos:
+  api:
+    cpu: 1
+    memory: "128MB"
+    podname: "intra"
+    entrypoint: "api"
+    envname: "prod"
+    networks:
+      - "release"
+    elb:
+      - "internal eru-stats.ricebook.net"
