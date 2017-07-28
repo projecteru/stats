@@ -60,8 +60,10 @@ func podGetNodes(podname string) (nodes []Node, err error) {
 		wg.Add(1)
 		defer wg.Done()
 		remaining := len(respNodes)
-		for c := range nodeInfoChan {
-			nodes = append(nodes, c)
+		for n := range nodeInfoChan {
+			if n.HostName != "" {
+				nodes = append(nodes, n)
+			}
 			if remaining--; remaining == 0 {
 				close(nodeInfoChan)
 			}
@@ -74,6 +76,7 @@ func podGetNodes(podname string) (nodes []Node, err error) {
 			node, err := nodeGetInfo(nodeKey)
 			if err != nil {
 				log.Errorf("Get node info error: %s", err)
+				nodeInfoChan <- Node{}
 				return
 			}
 			n := Node{
@@ -234,7 +237,9 @@ func ContainersInfo(IDs []string) ([]types.Container, error) {
 		defer wg.Done()
 		remaining := len(IDs)
 		for c := range containerChan {
-			allContainerInfo = append(allContainerInfo, c)
+			if c.ID != "" {
+				allContainerInfo = append(allContainerInfo, c)
+			}
 			if remaining--; remaining == 0 {
 				close(containerChan)
 			}
@@ -246,6 +251,7 @@ func ContainersInfo(IDs []string) ([]types.Container, error) {
 			container, err := coreGetContainerInfo(id)
 			if err != nil {
 				log.Errorf("Get container info error: %s", err)
+				containerChan <- types.Container{}
 				return
 			}
 			containerChan <- container

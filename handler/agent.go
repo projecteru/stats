@@ -92,6 +92,7 @@ func AgentAllNodesAndContainers() (nodes []string, containers map[string]string,
 			nodeContainers, err := node.allContainers()
 			if err != nil {
 				log.Errorf("CountContainers error: %s", err)
+				containerChan <- nil
 				return
 			}
 			containers := map[string]string{}
