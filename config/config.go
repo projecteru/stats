@@ -35,7 +35,7 @@ func InitConf() error {
 	C = &config{}
 
 	C.Bind = ":6006"
-	C.Etcd.AgentPrefix = "/agent2"
+	C.Etcd.AgentPrefix = "/eru-agent"
 	C.Etcd.CorePrefix = "/eru-core"
 	C.LogLevel = "info"
 	C.Citadel.Host = "http://citadel.ricebook.net"

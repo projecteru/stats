@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	NAME     = "eru-stats"
+	NAME     = "stats"
 	VERSION  = "0.4"
 	REVISION = "HEAD"
 	BUILTAT  = "now"

@@ -9,8 +9,8 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/coreos/etcd/client"
-	atypes "gitlab.ricebook.net/platform/agent/types"
-	"gitlab.ricebook.net/platform/eru-stats/config"
+	atypes "github.com/projecteru2/agent/types"
+	"github.com/projecteru2/stats/config"
 )
 
 // Node running agent

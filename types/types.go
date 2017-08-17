@@ -1,6 +1,6 @@
 package types
 
-import ctypes "gitlab.ricebook.net/platform/core/types"
+import ctypes "github.com/projecteru2/core/types"
 
 type Container struct {
 	ID         string

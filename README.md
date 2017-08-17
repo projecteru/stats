@@ -1,4 +1,4 @@
-# eru-stats
+# stats
 
 ## 功能
 
@@ -7,7 +7,7 @@
 
 ## 配置 - 环境变量
 
-- `AGENT_PREFIX` etcd中agent的prefix (默认是 /agent2)
+- `AGENT_PREFIX` etcd中agent的prefix (默认是 /eru-agent)
 - `CORE_PREFIX` etcd中core的prefix (默认是 /eru-core)
 - `CITADEL_URL` citadel的地址 (默认是 http://citadel.ricebook.net)
 - `CITADEL_AUTH_TOKEN` citadel的认证token (默认是 hello)

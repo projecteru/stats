@@ -6,9 +6,9 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"gitlab.ricebook.net/platform/eru-stats/config"
-	"gitlab.ricebook.net/platform/eru-stats/router"
-	"gitlab.ricebook.net/platform/eru-stats/versioninfo"
+	"github.com/projecteru2/stats/config"
+	"github.com/projecteru2/stats/router"
+	"github.com/projecteru2/stats/versioninfo"
 )
 
 func run() {
@@ -29,7 +29,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = versioninfo.NAME
-	app.Usage = "Run eru-stats"
+	app.Usage = "Run stats"
 	app.Version = versioninfo.VERSION
 	app.Action = func(c *cli.Context) error {
 		run()

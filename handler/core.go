@@ -9,10 +9,10 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/coreos/etcd/client"
-	ctypes "gitlab.ricebook.net/platform/core/types"
-	cutils "gitlab.ricebook.net/platform/core/utils"
-	"gitlab.ricebook.net/platform/eru-stats/config"
-	"gitlab.ricebook.net/platform/eru-stats/types"
+	ctypes "github.com/projecteru2/core/types"
+	cutils "github.com/projecteru2/core/utils"
+	"github.com/projecteru2/stats/config"
+	"github.com/projecteru2/stats/types"
 )
 
 func CorePods() (pods []string, err error) {

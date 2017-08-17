@@ -2,12 +2,12 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.ricebook.net/platform/eru-stats/apiproxy"
-	"gitlab.ricebook.net/platform/eru-stats/config"
-	"gitlab.ricebook.net/platform/eru-stats/handler"
+	"github.com/projecteru2/stats/apiproxy"
+	"github.com/projecteru2/stats/config"
+	"github.com/projecteru2/stats/handler"
 )
 
-// Run eru-stats server
+// Run stats server
 func Run() error {
 	r := gin.Default()
 

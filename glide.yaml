@@ -1,0 +1,21 @@
+package: github.com/projecteru2/stats
+import:
+- package: github.com/Sirupsen/logrus
+  version: ^1.0.3
+- package: github.com/codegangsta/cli
+  version: ^1.20.0
+- package: github.com/coreos/etcd
+  version: ^3.2.7
+  subpackages:
+  - client
+- package: github.com/deckarep/golang-set
+  version: ^1.6.0
+- package: github.com/gin-gonic/gin
+  version: ^1.2.0
+- package: github.com/projecteru2/agent
+  subpackages:
+  - types
+- package: github.com/projecteru2/core
+  subpackages:
+  - types
+  - utils

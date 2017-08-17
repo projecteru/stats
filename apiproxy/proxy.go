@@ -9,8 +9,8 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
-	"gitlab.ricebook.net/platform/eru-stats/config"
-	"gitlab.ricebook.net/platform/eru-stats/handler"
+	"github.com/projecteru2/stats/config"
+	"github.com/projecteru2/stats/handler"
 )
 
 // PodsMemCap proxy to http://citadel.test.ricebook.net/api/v1/pod/<podname>/getmemcap

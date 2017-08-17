@@ -1,15 +1,15 @@
-appname: "eru-stats"
+appname: "stats"
 entrypoints:
   api:
-    cmd: "eru-stats"
+    cmd: "stats"
     ports:
       - "6006/tcp"
     restart: "on-failure"
     healthcheck_url: "/ping"
     healthcheck_expected_code: 200
 build:
-  - "cp eru-stats /usr/bin"
-  - "eru-stats --version"
+  - "cp stats /usr/bin"
+  - "stats --version"
 base: "hub.ricebook.net/base/alpine:base-2017.03.14"
 subscribers: "@wrfly_;"
 volumes:
@@ -27,4 +27,4 @@ combos:
     networks:
       - "release"
     elb:
-      - "internal eru-stats.ricebook.net"
+      - "internal stats.ricebook.net"
